@@ -1,0 +1,5 @@
+
+*.avi
+*.mp4
+/FastRCNN/checkpoints
+/FastRCNN/data/data/images
