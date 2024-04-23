@@ -74,7 +74,6 @@ def train(**kwargs):
                 if os.path.exists(opt.debug_file):
                     ipdb.set_trace()
 
-                # Store loss names and their corresponding values
                 for k, v in trainer.get_meter_data().items():
                     if v is not None and k != 'total_loss':
                         loss_values[k].append(v)

@@ -356,7 +356,6 @@ class VGG16RoIHead(nn.Module):
                 which bounding boxes correspond to. Its shape is :math:`(R',)`.
 
         """
-        # in case roi_indices is  ndarray
         roi_indices = totensor(roi_indices).float()
         rois = totensor(rois).float()
         indices_and_rois = t.cat([roi_indices[:, None], rois], dim=1)
