@@ -1,0 +1,117 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #8a1e1e;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.overlay {
+    background: rgba(255, 255, 255, 0.77);
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    width: 75%;
+    height: 75%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.upload-box h1 {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.upload-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+    height: 100%;
+}
+
+.dotted-line {
+    border: 2px dashed #aaa;
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+    width: 700px;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.movie-icon {
+    width: 70px;
+    margin-bottom: 10px;
+}
+
+#fileInput {
+    display: none;
+}
+
+.browse-button, .process-button {
+    background-color: #8a1e1e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.browse-button {
+    margin-top: 10px;
+}
+
+.browse-button:hover, .process-button:hover {
+    background-color: #8a1e1e;
+}
+
+.process-button {
+    display: none; /* Hide process button initially */
+}
+
+.process-button-container {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end; /* Align process button to the right */
+}
+
+.file-name {
+    font-size: 14px;
+    color: black;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.progress-bar-container {
+    width: 100%;
+    background-color: #ddd;
+    height: 20px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+    display: none; /* Hide progress bar container initially */
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background-color: #8a1e1e;
+    transition: width 0.3s;
+}

@@ -2,4 +2,10 @@
 *.avi
 *.mp4
 *.pth
-/FasterRCNN/data/data/images
+*.pt
+*.png
+*.jpg
+/CelebrityRecognition/FaceRecognition/data/csvs
+/CelebrityRecognition/FaceRecognition/misc
+
+/CelebrityRecognition/FaceDetection/data/data/images

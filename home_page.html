@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Upload</title>
+    <link rel="stylesheet" href="src/style/style.css">
+</head>
+<body>
+    <div class="overlay">
+        <div class="upload-box">
+            <h1>Upload your video for face recognition</h1>
+            <div class="upload-area">
+                <div class="dotted-line" id="dottedLine">
+                    <img src="src/materiale/movie-icon.png" alt="Movie Icon" class="movie-icon" id="movieIcon">
+                    <input type="file" id="fileInput" accept="video/*" onchange="handleFileSelect(event)">
+                    <button id="browse-button" class="browse-button" onclick="document.getElementById('fileInput').click()">Browse</button>
+                    <div class="file-name" id="fileName"></div>
+                </div>
+            </div>
+                <div id="processingText" style="display: none; font-weight: bold; margin-top: 10px;">
+                    Your processed video will be downloaded after processing is done...
+                </div>
+            <div class="progress-bar-container" id="progressBarContainer" style="display: none;">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="process-button-container">
+                <button class="process-button" id="processButton" onclick="processVideo()">Process</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+    <script>
+        function handleFileSelect(event) {
+            var fileInput = document.getElementById('fileInput');
+            var fileName = document.getElementById('fileName');
+            var movieIcon = document.getElementById('movieIcon');
+            var browseButton = document.getElementById('browse-button');
+            var processButton = document.getElementById('processButton');
+            var dottedLine = document.getElementById('dottedLine');
+            var progressBarContainer = document.getElementById('progressBarContainer');
+            var processingText = document.getElementById('processingText');
+            var file;
+
+            if (event.type === 'change') {
+                file = fileInput.files[0];
+            } else if (event.type === 'drop') {
+                event.preventDefault();
+                file = event.dataTransfer.files[0];
+                fileInput.files = event.dataTransfer.files;
+            }
+
+            if (file) {
+                fileName.innerHTML = '<img src="src/materiale/movie-icon.png" alt="Movie Icon" class="movie-icon" style="width: 20px; margin-right: 10px;">' + file.name;
+                movieIcon.style.display = 'none';
+                browseButton.style.display = 'none';
+                dottedLine.style.border = 'none';
+                processButton.style.display = 'block';
+                progressBarContainer.style.display = 'block';
+            } else {
+                fileName.textContent = '';
+                movieIcon.style.display = 'block';
+                browseButton.style.display = 'block';
+                dottedLine.style.border = '2px dashed #aaa';
+                processButton.style.display = 'none';
+                progressBarContainer.style.display = 'none';
+                processingText.style.display = 'none';
+            }
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            var dottedLine = document.getElementById('dottedLine');
+            dottedLine.classList.add('drag-over');
+        }
+
+        function handleDragLeave(event) {
+            var dottedLine = document.getElementById('dottedLine');
+            dottedLine.classList.remove('drag-over');
+        }
+
+        function handleDrop(event) {
+            handleFileSelect(event);
+            var dottedLine = document.getElementById('dottedLine');
+            dottedLine.classList.remove('drag-over');
+        }
+
+        function processVideo() {
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+            if (!file) {
+                alert("Please select a video file to upload.");
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch('http://localhost:5000/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.filename) {
+                    alert('File uploaded successfully. Processing will start shortly.');
+                    showProcessingMessage();
+                } else {
+                    alert('File upload failed.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while processing the video.');
+            });
+        }
+
+ 
+        function showProcessingMessage() {
+            var progressBarContainer = document.getElementById('progressBarContainer');
+            var processingText = document.getElementById('processingText');
+            var processButton = document.getElementById('processButton');
+            progressBarContainer.style.display = 'block';
+            processingText.style.display = 'block';
+            processButton.style.display = 'none'; 
+        }
+
+        const socket = io('http://localhost:5000', {
+            transports: ['websocket', 'polling'],
+            timeout: 5000,
+        });
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+        });
+
+        socket.on('connect_error', (err) => {
+            console.error('Connection Error:', err);
+        });
+
+        socket.on('progress', function(data) {
+            var progressBar = document.getElementById('progressBar');
+            progressBar.style.width = data.progress + '%';
+        });
+
+        socket.on('processing_started', (data) => {
+            console.log('Processing started for:', data.filename);
+        });
+
+        socket.on('processing_completed', (data) => {
+            console.log('Processing complete for:', data.filename);
+            var downloadLink = document.createElement('a');
+            downloadLink.href = `http://localhost:5000/download/${data.filename}`;
+            downloadLink.style.display = 'none';
+            downloadLink.download = data.filename;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink); 
+        });
+
+    </script>
+</body>
+</html>
