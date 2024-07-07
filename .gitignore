@@ -4,6 +4,10 @@
 *.pth
 *.pt
 *.png
+
+!results/
+!results/**/*.png
+
 *.jpg
 /CelebrityRecognition/FaceRecognition/data/csvs
 /CelebrityRecognition/FaceRecognition/misc
